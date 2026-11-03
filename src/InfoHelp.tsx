@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { CircleHelp, AlertCircle, X } from 'lucide-react';
-type Props={title:string;children:React.ReactNode;warning?:boolean};
+type Props={title:string;children:ReactNode;warning?:boolean};
 export function InfoHelp({title,children,warning=false}:Props){
  const [open,setOpen]=useState(false);
  return <span className="info-help">
