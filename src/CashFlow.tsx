@@ -10,6 +10,7 @@ const dateFor=(month:string,day:number)=>month+'-'+String(Math.min(Math.max(day,
 
 export function CashFlow({accounts,cards,transactions,purchases,installments,rules,statements}:Props){
  const [selected,setSelected]=useState(currentMonth());
+ const [filter,setFilter]=useState<'all'|'income'|'expense'|'card'>('all');
  const months=Array.from({length:6},(_,i)=>addMonths(currentMonth(),i));
  const initial=accounts.reduce((s,a)=>s+a.opening_balance_cents,0);
  // Opening balances are a snapshot. Historical posted entries must not be added to future cash flow.
@@ -54,7 +55,8 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
    <div className="panel"><small>Saídas totais</small><strong>{money(active.expense+active.cardsTotal)}</strong></div>
   </div>
   <h3>Programação de {label(active.month)}</h3>
-  {active.items.length?active.items.map(x=><div className="item" key={x.id}><div className="item-main"><b>{x.description}</b><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
+  <div className="month-strip" aria-label="Filtrar programação">{([{id:'all',name:'Todos'},{id:'income',name:'Entradas'},{id:'expense',name:'Conta corrente'},{id:'card',name:'Cartões'}] as const).map(f=><button key={f.id} type="button" className={filter===f.id?'month-choice active':'month-choice'} aria-pressed={filter===f.id} onClick={()=>setFilter(f.id)}>{f.name}</button>)}</div>
+  {active.items.filter(x=>filter==='all'||x.type===filter).length?active.items.filter(x=>filter==='all'||x.type===filter).map(x=><div className="item" key={x.id} style={{borderLeft:'4px solid '+(x.type==='income'?'#22a06b':x.type==='card'?'#3b82f6':'#e5a000'),paddingLeft:12,background:x.type==='income'?'rgba(34,160,107,.06)':x.type==='card'?'rgba(59,130,246,.06)':'rgba(229,160,0,.06)',borderRadius:8}}><div className="item-main"><b>{x.description}</b><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
   <p className="forecast-footnote">Saldo inicial informado nas contas: {money(initial)}. Não somado ao resultado mensal porque ainda é necessário conciliar a data-base e os pagamentos já realizados. Recorrências podem coincidir com lançamentos avulsos: revise antes de considerar a projeção definitiva.</p>
  </section>;
 }
