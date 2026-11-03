@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { addMonths, currentMonth, forecastForCard, money } from './forecast';
+import { addMonths, cardStatementLabel, currentMonth, forecastForCard, money, shortCardName } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
 type Account = { opening_balance_cents:number };
 type Transaction = { id:string; description:string; amount_cents:number; direction:'income'|'expense'; payment_method:string; transaction_date:string; status:string };
 type Props = { accounts:Account[]; cards:ForecastCard[]; transactions:Transaction[]; purchases:ForecastPurchase[]; installments:ForecastInstallment[]; rules:ForecastRule[]; statements:ForecastStatement[] };
 const label=(month:string)=>new Date(month+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-const paymentLabel=(status:string|undefined,date:string,type:'income'|'expense'|'card',today:string)=>{if(status==='paid'||(status==='posted'&&date<=today))return type==='income'?'Recebido':'Pago';if(status==='reconciled')return 'Conciliada';if(status==='closed')return 'Fechada';if(date<today)return 'Vencido';if(status==='unconfirmed')return 'Não confirmado';return 'Pendente'};
+const paymentLabel=(status:string|undefined,date:string,type:'income'|'expense'|'card',today:string)=>{if(status==='paid'||(status==='posted'&&date<=today))return type==='income'?'Recebido':'Pago';if(status==='reconciled'||status==='open')return 'Fatura em aberto';if(status==='future')return 'Fatura futura';if(status==='closed')return 'Fechada';if(date<today)return 'Vencido';if(status==='unconfirmed')return 'Não confirmado';return 'Pendente'};
 const dateFor=(month:string,day:number)=>month+'-'+String(Math.min(Math.max(day,1),new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate())).padStart(2,'0');
 
 export function CashFlow({accounts,cards,transactions,purchases,installments,rules,statements}:Props){
@@ -36,7 +36,7 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
    const saved=statements.find(s=>s.card_id===c.id&&s.statement_month.slice(0,7)===statementKey);
    if(saved?.status==='paid')continue;
    const total=saved?.confirmed_total_cents??f.total;
-   if(total>0)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+c.name+(saved?.confirmed_total_cents!=null?(saved.status==='reconciled'?' · conciliada':saved.status==='closed'?' · fechada':' · registrada'):' · prevista'),amount:total,type:'card',status:saved?.status});
+   if(total>0)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+shortCardName(c.name)+' · '+cardStatementLabel(c,statementKey,saved?.status,today).toLocaleLowerCase('pt-BR'),amount:total,type:'card',status:saved?.status==='reconciled'?cardStatementLabel(c,statementKey,saved?.status,today)==='Fatura em aberto'?'open':'future':saved?.status});
   }
   items.sort((a,b)=>a.date.localeCompare(b.date));
   const income=items.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0);
@@ -58,7 +58,7 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
   </div>
   <h3>Programação de {label(active.month)}</h3>
   <div className="month-strip" aria-label="Filtrar programação">{([{id:'all',name:'Todos'},{id:'income',name:'Entradas'},{id:'expense',name:'Conta corrente'},{id:'card',name:'Cartões'}] as const).map(f=><button key={f.id} type="button" className={filter===f.id?'month-choice active':'month-choice'} aria-pressed={filter===f.id} onClick={()=>setFilter(f.id)}>{f.name}</button>)}</div>
-  {active.items.filter(x=>filter==='all'||x.type===filter).length?active.items.filter(x=>filter==='all'||x.type===filter).map(x=><div className="item" key={x.id} style={{borderLeft:'4px solid '+(x.type==='income'?'#22a06b':x.type==='card'?'#3b82f6':'#e5a000'),paddingLeft:12,background:x.type==='income'?'rgba(34,160,107,.06)':x.type==='card'?'rgba(59,130,246,.06)':'rgba(229,160,0,.06)',borderRadius:8}}><div className="item-main"><b>{x.description}</b><small style={{fontWeight:700,color:paymentLabel(x.status,x.date,x.type,today)==='Pago'||paymentLabel(x.status,x.date,x.type,today)==='Recebido'?'#86efac':x.date<today?'#fca5a5':x.status==='reconciled'?'#93c5fd':'#fde68a'}}>{paymentLabel(x.status,x.date,x.type,today)}</small><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
+  {active.items.filter(x=>filter==='all'||x.type===filter).length?active.items.filter(x=>filter==='all'||x.type===filter).map(x=><div className="item" key={x.id} style={{borderLeft:'4px solid '+(x.type==='income'?'#22a06b':x.type==='card'?'#3b82f6':'#e5a000'),paddingLeft:12,background:x.type==='income'?'rgba(34,160,107,.06)':x.type==='card'?'rgba(59,130,246,.06)':'rgba(229,160,0,.06)',borderRadius:8}}><div className="item-main"><b>{x.description}</b><small style={{fontWeight:700,color:paymentLabel(x.status,x.date,x.type,today)==='Pago'||paymentLabel(x.status,x.date,x.type,today)==='Recebido'?'#86efac':x.date<today?'#fca5a5':(x.status==='reconciled'||x.status==='open'||x.status==='future')?'#93c5fd':'#fde68a'}}>{paymentLabel(x.status,x.date,x.type,today)}</small><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
   <p className="forecast-footnote">Saldo inicial informado nas contas: {money(initial)}. Não somado ao resultado mensal porque ainda é necessário conciliar a data-base e os pagamentos já realizados. Recorrências podem coincidir com lançamentos avulsos: revise antes de considerar a projeção definitiva.</p>
  </section>;
 }
