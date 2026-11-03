@@ -1,3 +1,4 @@
+import { InfoHelp } from './InfoHelp';
 import { useState } from 'react';
 import { addMonths, currentMonth, forecastForCard, isCardStatementPayment, money } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
@@ -51,7 +52,7 @@ export function ForecastWave({accounts,cards,transactions,purchases,installments
  const balancePoints=balances.map((v,i)=>({x:x(i),y:y(v)}));
  const selected=values[active];
  return <section className="panel wave-panel" aria-label="Gráfico de previsão de receitas e despesas para seis meses">
-  <div className="section-title wave-heading"><div><div className="eyebrow">Visão dos próximos 6 meses</div><h2>Entradas e saídas</h2></div><span className="wave-live">Projeção dinâmica</span></div>
+  <div className="section-title wave-heading"><div><div className="eyebrow">Visão dos próximos 6 meses</div><h2>Entradas e saídas</h2></div><div className="info-help-actions"><span className="wave-live">Projeção dinâmica</span><InfoHelp title="Entenda o gráfico">Verde: receitas. Azul: gastos e cartões. Amarelo: saldo acumulado estimado. Toque em cada mês para consultar os valores. Movimentações não cadastradas não são estimadas, e o saldo não é uma consulta ao banco.</InfoHelp></div></div>
   <div className="wave-legend"><span><i className="wave-dot income-dot"/>Receitas</span><span><i className="wave-dot expense-dot"/>Gastos + cartões</span>{validBase&&<span className="wave-balance-key">● Saldo acumulado</span>}</div>
   <div className="wave-chart"><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Linhas de receitas em verde e despesas em azul, atualizadas conforme os lançamentos" preserveAspectRatio="xMidYMid meet">
    <defs><linearGradient id="incomeWaveFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#34d399" stopOpacity=".18"/><stop offset="100%" stopColor="#34d399" stopOpacity="0"/></linearGradient></defs>
@@ -69,6 +70,6 @@ export function ForecastWave({accounts,cards,transactions,purchases,installments
   {validBase&&<div className="wave-overview"><span>Saldo acumulado estimado · {monthLabel(selected.month)}</span><strong className={balances[active]>=0?"green":"wave-negative"}>{money(balances[active])}</strong></div>}
   <div className="wave-result" aria-live="polite"><div><small>Resultado previsto · {monthLabel(selected.month)}</small><strong className={selected.income-selected.expense>=0?'green':'wave-negative'}>{selected.income-selected.expense>=0?'+ ':'− '}{money(Math.abs(selected.income-selected.expense))}</strong></div><small>{selected.income>=selected.expense?'Receitas previstas superiores aos gastos.':'Gastos previstos superiores às receitas.'}</small></div>
   <div className="wave-overview" aria-label="Resultado previsto dos próximos seis meses"><span>Resultado total dos 6 meses</span><strong className={values.reduce((sum,v)=>sum+v.income-v.expense,0)>=0?'green':'wave-negative'}>{values.reduce((sum,v)=>sum+v.income-v.expense,0)>=0?'+ ':'− '}{money(Math.abs(values.reduce((sum,v)=>sum+v.income-v.expense,0)))}</strong></div>
-  <p className="forecast-footnote">Projeção com registros futuros, recorrências e faturas. A linha amarela representa saldo acumulado estimado a partir do saldo inicial e movimentações registradas, não saldo confirmado pelo banco. Lançamentos já realizados não entram novamente no fluxo previsto; valores não cadastrados não são estimados.</p>
+  
  </section>;
 }
