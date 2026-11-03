@@ -1,3 +1,4 @@
+import { InfoHelp } from './InfoHelp';
 import { useState } from 'react';
 import { addMonths, cardStatementLabel, currentMonth, forecastForCard, isCardStatementPayment, money, shortCardName } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
@@ -47,8 +48,8 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
  });
  const active=data.find(x=>x.month===selected)||data[0];
  return <section className="panel" aria-label="Fluxo de caixa consolidado">
-  <div className="section-title"><h2>Fluxo de caixa · 6 meses</h2></div>
-  <p className="forecast-footnote">Entradas programadas, despesas Pix/débito e faturas por mês de vencimento. Valores futuros ainda não cadastrados não são estimados.</p>
+  <div className="section-title"><h2>Fluxo de caixa · 6 meses</h2><InfoHelp title="Entenda o fluxo de caixa">As receitas, despesas e faturas são organizadas por mês de vencimento. O resultado mensal não inclui o saldo inicial. Revise recorrências e pagamentos para evitar duplicidades.</InfoHelp></div>
+  
   <div className="month-strip">{data.map(d=><button key={d.month} type="button" className={selected===d.month?'month-choice active':'month-choice'} onClick={()=>setSelected(d.month)}>{new Date(d.month+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'short'})}</button>)}</div>
   <div className="forecast-total"><small>Resultado programado · {label(active.month)}</small><strong>{money(active.net)}</strong></div>
   <div className="stats">
@@ -60,6 +61,6 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
   <h3>Programação de {label(active.month)}</h3>
   <div className="month-strip" aria-label="Filtrar programação">{([{id:'all',name:'Todos'},{id:'income',name:'Entradas'},{id:'expense',name:'Conta corrente'},{id:'card',name:'Cartões'}] as const).map(f=><button key={f.id} type="button" className={filter===f.id?'month-choice active':'month-choice'} aria-pressed={filter===f.id} onClick={()=>setFilter(f.id)}>{f.name}</button>)}</div>
   {active.items.filter(x=>filter==='all'||x.type===filter).length?active.items.filter(x=>filter==='all'||x.type===filter).map(x=><div className="item" key={x.id} style={{borderLeft:'4px solid '+(x.type==='income'?'#22a06b':x.type==='card'?'#3b82f6':'#e5a000'),paddingLeft:12,background:x.type==='income'?'rgba(34,160,107,.06)':x.type==='card'?'rgba(59,130,246,.06)':'rgba(229,160,0,.06)',borderRadius:8}}><div className="item-main"><b>{x.description}</b><small style={{fontWeight:700,color:paymentLabel(x.status,x.date,x.type,today)==='Pago'||paymentLabel(x.status,x.date,x.type,today)==='Recebido'?'#86efac':x.date<today?'#fca5a5':(x.status==='reconciled'||x.status==='open'||x.status==='future')?'#93c5fd':'#fde68a'}}>{paymentLabel(x.status,x.date,x.type,today)}</small><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
-  <p className="forecast-footnote">Saldo inicial informado nas contas: {money(initial)}. Não somado ao resultado mensal porque ainda é necessário conciliar a data-base e os pagamentos já realizados. Recorrências podem coincidir com lançamentos avulsos: revise antes de considerar a projeção definitiva.</p>
+  
  </section>;
 }
