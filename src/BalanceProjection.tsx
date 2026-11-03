@@ -1,4 +1,4 @@
-import { addMonths, currentMonth, forecastForCard, money } from './forecast';
+import { currentMonth, forecastForCard, money } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
 type Account={id:string;opening_balance_cents:number;opening_balance_date:string};
