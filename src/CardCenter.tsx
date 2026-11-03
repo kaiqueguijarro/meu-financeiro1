@@ -18,7 +18,8 @@ export function CardCenter({cards,purchases,installments,rules,statements}:Props
    const nextClosing=closingThisMonth>=today?closingThisMonth:dateIn(addMonths(thisMonth,1),card.closing_day);
    const bestDay=new Date(nextClosing+'T12:00:00');bestDay.setDate(bestDay.getDate()+1);
    const bestDate=bestDay.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-   const upcoming=Array.from({length:4},(_,i)=>addMonths(thisMonth,i));
+   const firstStatement=card.due_day>card.closing_day?thisMonth:addMonths(thisMonth,1);
+   const upcoming=Array.from({length:4},(_,i)=>addMonths(firstStatement,i));
    const remaining=installments.filter(i=>i.status!=='cancelled'&&i.statement_month.slice(0,7)>=thisMonth&&purchases.some(p=>p.id===i.transaction_id&&p.card_id===card.id)).reduce((s,i)=>s+i.amount_cents,0);
    return <article className="card-center-item" key={card.id}>
     <div className="card-center-title"><strong>{card.name}</strong><span>Melhor dia estimado: {bestDate}</span></div>
