@@ -79,3 +79,17 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 .wave-chart{overflow:hidden}
 
 .card-center{margin-bottom:16px}.card-center-item{padding:16px 0;border-top:1px solid #344660}.card-center-title{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.card-center-title strong{font-size:16px}.card-center-title span{font-size:11px;color:#8ee2bf;background:#153e39;border-radius:999px;padding:6px 9px}.card-center-dates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card-center-dates>div{background:#182943;border:1px solid #344660;border-radius:12px;padding:11px 9px;min-width:0}.card-center-dates small,.card-center-months small{display:block;color:#aabbd2;font-size:10px;line-height:1.4}.card-center-dates b{display:block;font-size:13px;margin-top:7px;overflow-wrap:anywhere}.card-center-months{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}.card-center-months>div{background:#132239;border:1px solid #2e435e;border-radius:12px;padding:11px 8px;min-width:0}.card-center-months span{font-size:11px;color:#b8cbe4}.card-center-months strong{display:block;font-size:clamp(11px,2.6vw,15px);margin:7px 0;overflow-wrap:anywhere}.card-center-months small{margin-top:4px}@media(max-width:430px){.card-center-dates{grid-template-columns:repeat(2,minmax(0,1fr))}.card-center-months{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Mobile-first card center: two columns keep currency amounts intact */
+.card-center .card-center-months{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card-center .card-center-months>div{min-width:0;padding:14px 12px}
+.card-center .card-center-months strong{font-size:clamp(15px,3.8vw,20px);white-space:nowrap;overflow-wrap:normal;letter-spacing:-.3px}
+.card-center .card-center-months small{font-size:11px}
+.card-center .card-center-dates{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card-center .card-center-dates>div{padding:12px}
+.card-center .card-center-dates b{font-size:clamp(12px,3.2vw,16px)}
+.card-center .card-center-title span{max-width:100%}
+.card-center .month-strip{scroll-padding-inline:8px}
+.floating{position:fixed!important;left:auto!important;right:max(16px,env(safe-area-inset-right))!important;bottom:calc(76px + env(safe-area-inset-bottom))!important;transform:none!important;width:52px!important;height:52px!important;min-width:52px!important;max-width:52px!important;padding:0!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important;font-size:0!important;z-index:20}
+.floating svg{width:23px;height:23px;flex:none}
+@media(min-width:720px){.card-center .card-center-months{grid-template-columns:repeat(4,minmax(0,1fr))}.floating{width:auto!important;max-width:none!important;height:auto!important;padding:13px 18px!important;border-radius:999px!important;font-size:13px!important;bottom:25px!important}}
