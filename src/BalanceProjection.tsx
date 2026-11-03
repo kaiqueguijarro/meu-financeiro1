@@ -1,4 +1,4 @@
-import { currentMonth, forecastForCard, money } from './forecast';
+import { currentMonth, forecastForCard, isCardStatementPayment, money } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
 type Account={id:string;opening_balance_cents:number;opening_balance_date:string};
@@ -36,7 +36,7 @@ export function BalanceProjection({accounts,cards,transactions,purchases,install
   if(due<=today)continue;
   const total=forecastForCard(card,month,purchases,installments,rules,statements).total;
   // A recorded checking-account payment may already cover the same statement.
-  const hasPayment=transactions.some(t=>t.payment_method!=='credit'&&t.direction==='expense'&&t.status!=='cancelled'&&t.transaction_date.slice(0,7)===month&&t.amount_cents===total&&total>0&&/fatura|cart[aã]o/i.test(t.description));
+  const hasPayment=transactions.some(t=>t.payment_method!=='credit'&&t.direction==='expense'&&t.status!=='cancelled'&&t.transaction_date.slice(0,7)===month&&t.amount_cents===total&&total>0&&isCardStatementPayment(t.description,card.name));
   if(!hasPayment)cardExpenses+=total;
  }
  const incoming=incomeTx+incomeRules, outgoing=expenseTx+expenseRules+cardExpenses;
@@ -45,6 +45,6 @@ export function BalanceProjection({accounts,cards,transactions,purchases,install
  return <section className="panel balance-projection" aria-label="Projeção de saldo até o fim do mês">
   <div className="section-title"><h2>Saldo projetado · fim do mês</h2><span className="projection-tag">Estimativa</span></div>
   {trustworthy?<><div className="projection-value">{money(projected)}</div><div className="projection-rows"><div><span>Saldo de referência ajustado</span><strong>{money(available)}</strong></div><div><span>Entradas futuras cadastradas</span><strong className="green">+ {money(incoming)}</strong></div><div><span>Pix, débito e contas futuras</span><strong>− {money(expenseTx+expenseRules)}</strong></div><div><span>Faturas a vencer</span><strong>− {money(cardExpenses)}</strong></div></div></>:<p className="forecast-footnote">Cadastre uma conta com saldo inicial e data-base válida para calcular a projeção.</p>}
-  <p className="forecast-footnote">Estimativa até {new Date(end+'T12:00:00').toLocaleDateString('pt-BR')}. O saldo de referência considera movimentações realizadas após a data-base cadastrada. A projeção usa apenas valores registrados; pagamentos de faturas e recorrências precisam ser conferidos para evitar duplicidade. Não é saldo bancário confirmado.</p>
+  <p className="forecast-footnote">Estimativa até {new Date(end+'T12:00:00').toLocaleDateString('pt-BR')}. O saldo de referência considera movimentações realizadas após a data-base cadastrada. A projeção usa apenas valores registrados; pagamentos de faturas são identificados pelo nome do cartão e valor; pagamentos sem identificação clara e recorrências precisam de conferência para evitar duplicidade. Não é saldo bancário confirmado.</p>
  </section>;
 }
