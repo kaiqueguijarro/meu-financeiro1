@@ -5,7 +5,7 @@ type Account={id:string;opening_balance_cents:number;opening_balance_date:string
 type Tx={id:string;description:string;amount_cents:number;direction:'income'|'expense';payment_method:string;transaction_date:string;status:string;account_id:string|null};
 type Props={accounts:Account[];cards:ForecastCard[];transactions:Tx[];purchases:ForecastPurchase[];installments:ForecastInstallment[];rules:ForecastRule[];statements:ForecastStatement[]};
 const dayInMonth=(month:string,day:number)=>month+'-'+String(Math.min(Math.max(1,day),new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate())).padStart(2,'0');
-const normalize=(s:string)=>s.trim().toLocaleLowerCase('pt-BR').replace(/\\s+/g,' ');
+const normalize=(s:string)=>s.trim().toLocaleLowerCase('pt-BR').split(' ').filter(Boolean).join(' ');
 export function BalanceProjection({accounts,cards,transactions,purchases,installments,rules,statements}:Props){
  const today=new Date().toLocaleDateString('sv-SE');
  const month=currentMonth();
