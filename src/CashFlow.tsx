@@ -14,17 +14,18 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
  const months=Array.from({length:6},(_,i)=>addMonths(currentMonth(),i));
  const initial=accounts.reduce((s,a)=>s+a.opening_balance_cents,0);
  // Opening balances are a snapshot. Historical posted entries must not be added to future cash flow.
- const today=new Date().toLocaleDateString('en-CA');
+ const today=new Date().toLocaleDateString('sv-SE');
  const data=months.map(month=>{
   const items:{id:string;date:string;description:string;amount:number;type:'income'|'expense'|'card';status?:string}[]=[];
   for(const t of transactions){
-   if(t.transaction_date.slice(0,7)!==month||t.payment_method==='credit'||t.status==='cancelled'||t.status==='posted'||t.status==='paid')continue;
+   if(t.transaction_date.slice(0,7)!==month||t.payment_method==='credit'||t.status==='cancelled'||((t.status==='posted'||t.status==='paid')&&t.transaction_date<=today))continue;
    items.push({id:t.id,date:t.transaction_date,description:t.description,amount:t.amount_cents,type:t.direction,status:t.status});
   }
   for(const r of rules){
    if(!r.active||r.payment_method==='credit')continue;
    const date=dateFor(month,r.day_of_month);
    if(date<r.start_date||(r.end_date&&date>r.end_date)||date<today)continue;
+   if(transactions.some(t=>t.payment_method!=='credit'&&t.transaction_date===date&&t.description.trim().toLowerCase()===r.description.trim().toLowerCase()&&t.amount_cents===r.amount_cents&&t.direction===r.direction&&t.status!=='cancelled'))continue;
    items.push({id:'rule-'+r.id,date,description:r.description+' · recorrente',amount:r.amount_cents,type:r.direction==='income'?'income':'expense',status:'unconfirmed'});
   }
   for(const c of cards){
@@ -56,7 +57,7 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
   </div>
   <h3>Programação de {label(active.month)}</h3>
   <div className="month-strip" aria-label="Filtrar programação">{([{id:'all',name:'Todos'},{id:'income',name:'Entradas'},{id:'expense',name:'Conta corrente'},{id:'card',name:'Cartões'}] as const).map(f=><button key={f.id} type="button" className={filter===f.id?'month-choice active':'month-choice'} aria-pressed={filter===f.id} onClick={()=>setFilter(f.id)}>{f.name}</button>)}</div>
-  {active.items.filter(x=>filter==='all'||x.type===filter).length?active.items.filter(x=>filter==='all'||x.type===filter).map(x=><div className="item" key={x.id} style={{borderLeft:'4px solid '+(x.type==='income'?'#22a06b':x.type==='card'?'#3b82f6':'#e5a000'),paddingLeft:12,background:x.type==='income'?'rgba(34,160,107,.06)':x.type==='card'?'rgba(59,130,246,.06)':'rgba(229,160,0,.06)',borderRadius:8}}><div className="item-main"><b>{x.description}</b><small style={{fontWeight:700,color:x.status==='paid'||x.status==='posted'||x.status==='reconciled'?'#86efac':x.status==='unconfirmed'?'#cbd5e1':x.date<today?'#fca5a5':'#fde68a'}}>{x.status==='paid'||x.status==='posted'||x.status==='reconciled'?(x.type==='income'?'Recebido':'Pago'):x.status==='unconfirmed'?'Não confirmado':x.date<today?'Vencido':'Pendente'}</small><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
+  {active.items.filter(x=>filter==='all'||x.type===filter).length?active.items.filter(x=>filter==='all'||x.type===filter).map(x=><div className="item" key={x.id} style={{borderLeft:'4px solid '+(x.type==='income'?'#22a06b':x.type==='card'?'#3b82f6':'#e5a000'),paddingLeft:12,background:x.type==='income'?'rgba(34,160,107,.06)':x.type==='card'?'rgba(59,130,246,.06)':'rgba(229,160,0,.06)',borderRadius:8}}><div className="item-main"><b>{x.description}</b><small style={{fontWeight:700,color:x.status==='paid'||x.status==='posted'?'#86efac':x.status==='unconfirmed'?'#cbd5e1':x.date<today?'#fca5a5':'#fde68a'}}>{x.status==='paid'||x.status==='posted'?(x.type==='income'?'Recebido':'Pago'):x.status==='reconciled'?'Conciliada':x.status==='unconfirmed'?'Não confirmado':x.date<today?'Vencido':'Pendente'}</small><small>{new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} · {x.type==='income'?'Entrada':x.type==='card'?'Cartão':'Conta / débito'}</small></div><strong>{x.type==='income'?'+':'−'} {money(x.amount)}</strong></div>):<p className="empty">Nenhuma entrada ou despesa futura cadastrada neste mês.</p>}
   <p className="forecast-footnote">Saldo inicial informado nas contas: {money(initial)}. Não somado ao resultado mensal porque ainda é necessário conciliar a data-base e os pagamentos já realizados. Recorrências podem coincidir com lançamentos avulsos: revise antes de considerar a projeção definitiva.</p>
  </section>;
 }
