@@ -30,7 +30,10 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
    // A statement is paid in its due month; forecastForCard uses statement month.
    const statementKey=month;
    const f=forecastForCard(c,statementKey,purchases,installments,rules,statements);
-   if(f.total>0)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+c.name+(f.confirmed?' · confirmada':' · prevista'),amount:f.total,type:'card'});
+   const saved=statements.find(s=>s.card_id===c.id&&s.statement_month.slice(0,7)===statementKey);
+   if(saved?.status==='paid')continue;
+   const total=saved?.confirmed_total_cents??f.total;
+   if(total>0)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+c.name+(saved?.confirmed_total_cents!=null?' · conciliada':' · prevista'),amount:total,type:'card'});
   }
   items.sort((a,b)=>a.date.localeCompare(b.date));
   const income=items.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0);
