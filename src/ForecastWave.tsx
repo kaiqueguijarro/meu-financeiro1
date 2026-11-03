@@ -14,13 +14,14 @@ export function ForecastWave({cards,transactions,purchases,installments,rules,st
  const values=months.map(month=>{
   let income=0,expense=0;
   for(const t of transactions){
-   if(t.transaction_date.slice(0,7)!==month||t.payment_method==='credit'||['cancelled','posted','paid'].includes(t.status))continue;
+   if(t.transaction_date.slice(0,7)!==month||t.payment_method==='credit'||t.status==='cancelled'||(['posted','paid'].includes(t.status)&&t.transaction_date<=today))continue;
    if(t.direction==='income')income+=t.amount_cents;else expense+=t.amount_cents;
   }
   for(const r of rules){
    if(!r.active||r.payment_method==='credit')continue;
    const date=dateFor(month,r.day_of_month);
    if(date<today||date<r.start_date||(r.end_date&&date>r.end_date))continue;
+   if(transactions.some(t=>t.payment_method!=='credit'&&t.transaction_date===date&&t.amount_cents===r.amount_cents&&t.direction===r.direction&&t.status!=='cancelled'))continue;
    if(r.direction==='income')income+=r.amount_cents;else expense+=r.amount_cents;
   }
   for(const card of cards){
