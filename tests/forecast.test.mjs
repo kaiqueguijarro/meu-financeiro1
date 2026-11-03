@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {forecastForCard,statementMonth,addMonths} from '../.test-build/forecast.js';
+const card={id:'black',name:'Black',closing_day:24,due_day:1};
+const p=(id,date,amount,count)=>({id,description:id,card_id:'black',transaction_date:date,amount_cents:amount,installments:count});
+const total=(key,purchases=[],rows=[],rules=[],statements=[])=>forecastForCard(card,key,purchases,rows,rules,statements);
+assert.equal(statementMonth('2026-11-24',24),'2026-12');
+assert.equal(statementMonth('2026-11-25',24),'2027-01');
+assert.equal(addMonths('2026-12',1),'2027-01');
+assert.equal(total('2026-12',[p('parcelado','2026-11-20',10000,3)]).projected,3334);
+assert.equal(total('2027-01',[p('parcelado','2026-11-20',10000,3)]).projected,3333);
+assert.equal(total('2027-03',[p('parcelado','2026-11-20',10000,3)]).projected,0);
+const recurring={id:'r1',description:'Assinatura',card_id:'black',amount_cents:12990,direction:'expense',payment_method:'credit',day_of_month:25,start_date:'2026-11-25',end_date:null,active:true};
+assert.equal(total('2026-12',[],[],[recurring]).projected,0);
+assert.equal(total('2027-01',[],[],[recurring]).projected,12990);
+assert.equal(total('2027-02',[],[],[recurring]).projected,12990);
+assert.equal(total('2027-01',[p('p','2026-11-25',10000,2)],[],[recurring]).projected,17990);
+assert.equal(total('2027-01',[p('p','2026-11-25',10000,2)],[],[recurring],[{id:'s',card_id:'black',statement_month:'2027-01-01',confirmed_total_cents:20000,status:'reconciled'}]).total,20000);
+console.log('10 verificações de previsão aprovadas');
