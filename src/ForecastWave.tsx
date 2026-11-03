@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { addMonths, currentMonth, forecastForCard, money } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
-type Transaction = { id:string; amount_cents:number; direction:'income'|'expense'; payment_method:string; transaction_date:string; status:string };
+type Transaction = { id:string; description:string; amount_cents:number; direction:'income'|'expense'; payment_method:string; transaction_date:string; status:string };
 type Props = { cards:ForecastCard[]; transactions:Transaction[]; purchases:ForecastPurchase[]; installments:ForecastInstallment[]; rules:ForecastRule[]; statements:ForecastStatement[] };
 const monthLabel=(key:string)=>new Date(key+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'short'});
 const dateFor=(month:string,day:number)=>month+'-'+String(Math.min(Math.max(day,1),new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate())).padStart(2,'0');
@@ -21,7 +21,7 @@ export function ForecastWave({cards,transactions,purchases,installments,rules,st
    if(!r.active||r.payment_method==='credit')continue;
    const date=dateFor(month,r.day_of_month);
    if(date<today||date<r.start_date||(r.end_date&&date>r.end_date))continue;
-   if(transactions.some(t=>t.payment_method!=='credit'&&t.transaction_date===date&&t.amount_cents===r.amount_cents&&t.direction===r.direction&&t.status!=='cancelled'))continue;
+   if(transactions.some(t=>t.payment_method!=='credit'&&t.transaction_date===date&&t.description.trim().toLowerCase()===r.description.trim().toLowerCase()&&t.amount_cents===r.amount_cents&&t.direction===r.direction&&t.status!=='cancelled'))continue;
    if(r.direction==='income')income+=r.amount_cents;else expense+=r.amount_cents;
   }
   for(const card of cards){
