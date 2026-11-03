@@ -1,3 +1,4 @@
+import { InfoHelp } from './InfoHelp';
 import { currentMonth, forecastForCard, isCardStatementPayment, money } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
@@ -43,8 +44,8 @@ export function BalanceProjection({accounts,cards,transactions,purchases,install
  const projected=available+incoming-outgoing;
  const trustworthy=dated&&accounts.length>0;
  return <section className="panel balance-projection" aria-label="Projeção de saldo até o fim do mês">
-  <div className="section-title"><h2>Saldo projetado · fim do mês</h2><span className="projection-tag">Estimativa</span></div>
+  <div className="section-title"><h2>Saldo projetado · fim do mês</h2><div className="info-help-actions"><span className="projection-tag">Estimativa</span><InfoHelp title="Como funciona o saldo projetado">O saldo parte da data-base informada, soma entradas futuras e desconta despesas e faturas a vencer. Os pagamentos dos cartões precisam ser identificados pelo nome e valor para evitar duplicidades. Não é saldo confirmado pelo banco.</InfoHelp></div></div>
   {trustworthy?<><div className="projection-value">{money(projected)}</div><div className="projection-rows"><div><span>Saldo de referência ajustado</span><strong>{money(available)}</strong></div><div><span>Entradas futuras cadastradas</span><strong className="green">+ {money(incoming)}</strong></div><div><span>Pix, débito e contas futuras</span><strong>− {money(expenseTx+expenseRules)}</strong></div><div><span>Faturas a vencer</span><strong>− {money(cardExpenses)}</strong></div></div></>:<p className="forecast-footnote">Cadastre uma conta com saldo inicial e data-base válida para calcular a projeção.</p>}
-  <p className="forecast-footnote">Estimativa até {new Date(end+'T12:00:00').toLocaleDateString('pt-BR')}. O saldo de referência considera movimentações realizadas após a data-base cadastrada. A projeção usa apenas valores registrados; pagamentos de faturas são identificados pelo nome do cartão e valor; pagamentos sem identificação clara e recorrências precisam de conferência para evitar duplicidade. Não é saldo bancário confirmado.</p>
+  
  </section>;
 }
