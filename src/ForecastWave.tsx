@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addMonths, currentMonth, forecastForCard, money } from './forecast';
+import { addMonths, currentMonth, forecastForCard, isCardStatementPayment, money } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
 type Transaction = { id:string; description:string; amount_cents:number; direction:'income'|'expense'; payment_method:string; transaction_date:string; status:string;account_id:string|null };
@@ -28,7 +28,9 @@ export function ForecastWave({accounts,cards,transactions,purchases,installments
   for(const card of cards){
    const saved=statements.find(s=>s.card_id===card.id&&s.statement_month.slice(0,7)===month);
    if(saved?.status==='paid')continue;
-   expense+=forecastForCard(card,month,purchases,installments,rules,statements).total;
+   const total=forecastForCard(card,month,purchases,installments,rules,statements).total;
+   const paymentRecorded=total>0&&transactions.some(t=>t.payment_method!=='credit'&&t.direction==='expense'&&t.status!=='cancelled'&&t.transaction_date.slice(0,7)===month&&t.amount_cents===total&&isCardStatementPayment(t.description,card.name));
+   if(!paymentRecorded)expense+=total;
   }
   return {month,income,expense};
  });
