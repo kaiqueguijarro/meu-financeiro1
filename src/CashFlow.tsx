@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addMonths, cardStatementLabel, currentMonth, forecastForCard, money, shortCardName } from './forecast';
+import { addMonths, cardStatementLabel, currentMonth, forecastForCard, isCardStatementPayment, money, shortCardName } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
 type Account = { opening_balance_cents:number };
@@ -36,7 +36,8 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
    const saved=statements.find(s=>s.card_id===c.id&&s.statement_month.slice(0,7)===statementKey);
    if(saved?.status==='paid')continue;
    const total=saved?.confirmed_total_cents??f.total;
-   if(total>0)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+shortCardName(c.name)+' · '+cardStatementLabel(c,statementKey,saved?.status,today).toLocaleLowerCase('pt-BR'),amount:total,type:'card',status:saved?.status==='reconciled'?cardStatementLabel(c,statementKey,saved?.status,today)==='Fatura em aberto'?'open':'future':saved?.status});
+   const paymentRecorded=total>0&&transactions.some(t=>t.payment_method!=='credit'&&t.direction==='expense'&&t.status!=='cancelled'&&t.transaction_date.slice(0,7)===month&&t.amount_cents===total&&isCardStatementPayment(t.description,c.name));
+   if(total>0&&!paymentRecorded)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+shortCardName(c.name)+' · '+cardStatementLabel(c,statementKey,saved?.status,today).toLocaleLowerCase('pt-BR'),amount:total,type:'card',status:saved?.status==='reconciled'?cardStatementLabel(c,statementKey,saved?.status,today)==='Fatura em aberto'?'open':'future':saved?.status});
   }
   items.sort((a,b)=>a.date.localeCompare(b.date));
   const income=items.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0);
