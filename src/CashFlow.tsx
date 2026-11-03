@@ -28,7 +28,7 @@ export function CashFlow({accounts,cards,transactions,purchases,installments,rul
   }
   for(const c of cards){
    // A statement is paid in its due month; forecastForCard uses statement month.
-   const statementKey=c.due_day>c.closing_day?month:addMonths(month,-1);
+   const statementKey=month;
    const f=forecastForCard(c,statementKey,purchases,installments,rules,statements);
    if(f.total>0)items.push({id:'card-'+c.id,date:dateFor(month,c.due_day),description:'Fatura '+c.name+(f.confirmed?' · confirmada':' · prevista'),amount:f.total,type:'card'});
   }
