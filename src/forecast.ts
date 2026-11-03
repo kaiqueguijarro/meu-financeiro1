@@ -7,10 +7,10 @@ export type ForecastLine = {id:string;label:string;amount_cents:number;kind:'ins
 export const shortCardName=(name:string)=>{const value=name.toLocaleLowerCase('pt-BR');if(value.includes('latam'))return 'Latam';if(value.includes('azul'))return 'Azul';if(value.includes('black'))return 'Black';return name};
 /** Only associate a bank-account debit with a card when the card is explicitly named. */
 export const isCardStatementPayment=(description:string,cardName:string)=>{
- const norm=(value:string)=>value.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
- const text=norm(description),name=shortCardName(cardName).toLowerCase();
- const mentionsCard=name==='black'?/\\bblack\\b/.test(text):name==='azul'?/\\bazul\\b/.test(text):name==='latam'?/\\blatam\\b/.test(text):text.includes(name);
- return mentionsCard&&/fatura|cartao|pagamento|pgto/.test(text);
+ const norm=(value:string)=>value.normalize('NFD').toLowerCase().replaceAll('ã','a').replaceAll('á','a').replaceAll('â','a').replaceAll('é','e');
+ const words=norm(description).split(/[^a-z0-9]+/).filter(Boolean);
+ const name=shortCardName(cardName).toLowerCase();
+ return words.includes(name)&&words.some(w=>['fatura','cartao','pagamento','pgto'].includes(w));
 };
 export const monthKey=(date:string)=>date.slice(0,7);
 export const addMonths=(key:string,delta:number)=>{const [y,m]=key.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+delta,1));return d.toISOString().slice(0,7)};
