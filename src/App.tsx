@@ -12,7 +12,6 @@ type Tx = { id:string; description:string; amount_cents:number; direction:'incom
 type Statement = { id:string; card_id:string; statement_month:string; confirmed_total_cents:number|null; status:string };
 const money=(n:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n/100);
 const today=()=>new Date().toLocaleDateString('en-CA');
-const month=()=>new Date().toISOString().slice(0,7)+'-01';
 const methodLabels:Record<string,string>={pix:'Pix',debit:'Débito',cash:'Dinheiro',credit:'Crédito',transfer:'Transferência'};
 
 export function App(){
