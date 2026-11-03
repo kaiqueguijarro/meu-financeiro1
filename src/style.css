@@ -29,3 +29,17 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 @media(max-width:390px){.app{padding-left:13px;padding-right:13px}.main-nav{gap:5px}.home-stats{grid-template-columns:1fr}.home-stats .month-choice{min-width:48px}.balance-bottom{font-size:11px}}
 @media(min-width:720px){.app{padding-bottom:140px}.home-stats{grid-template-columns:1.25fr 1fr}.wave-panel{padding:25px}.wave-chart svg{max-height:310px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* iPhone account usability: readable ledger and unobstructed floating action */
+.account-movements{padding-bottom:24px}
+.account-movements .month-strip{gap:7px;padding:8px 0 12px}
+.account-movements .month-choice{min-width:62px;padding:9px 11px;font-size:12px;white-space:nowrap}
+.account-movements .account-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.account-movements .account-stats .panel{min-height:100px;padding:14px 12px}
+.account-movements .account-stats strong{font-size:clamp(16px,4vw,23px);overflow-wrap:anywhere}
+.account-movements .item{align-items:flex-start;gap:9px}
+.account-movements .item-main b{white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+.account-movements .item>strong{white-space:normal;text-align:right;min-width:0;max-width:42%;overflow-wrap:anywhere;line-height:1.4}
+.floating{width:auto;min-width:0;max-width:calc(100% - 34px);padding:13px 18px;border-radius:999px;font-size:13px;bottom:max(14px,env(safe-area-inset-bottom));box-shadow:0 8px 24px #0008}
+.app{padding-bottom:170px}
+@media(max-width:420px){.floating{left:auto;right:17px;transform:none}.account-movements .item>strong{font-size:12px}.account-movements .account-stats .panel{padding:12px 10px}}
