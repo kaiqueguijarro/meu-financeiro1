@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { ArrowDownLeft, ArrowUpRight, CreditCard, Landmark, LogOut, Plus, Wallet } from 'lucide-react';
 import { configured, supabase } from './supabase';
+import { CashFlow } from './CashFlow';
 import { addMonths, currentMonth, forecastForCard, money as forecastMoney } from './forecast';
 import type { ForecastPurchase, ForecastInstallment, ForecastRule } from './forecast';
 
@@ -68,6 +69,7 @@ export function App(){
  return <main className="app"><header><div><div className="eyebrow">PAINEL FINANCEIRO</div><h1>Meu Financeiro</h1></div><button className="iconbutton" title="Sair" onClick={()=>void supabase?.auth.signOut()}><LogOut size={19}/></button></header>
  <section className="balance"><div className="eyebrow">Saldo estimado das contas</div><strong>{money(balance)}</strong><p>Baseado nos saldos iniciais e lançamentos registrados.</p><div className="balance-bottom"><span><Landmark size={17}/> {accounts.length} conta(s)</span><span><CreditCard size={17}/> {cards.length} cartão(ões)</span></div></section>
  <div className="stats"><div className="panel"><div className="eyebrow">Faturas confirmadas · mês atual</div><strong>{money(billed)}</strong></div><div className="panel"><div className="eyebrow">Lançamentos registrados</div><strong>{txs.length}</strong></div></div>
+ <CashFlow accounts={accounts} cards={cards} transactions={txs} purchases={purchases} installments={installments} rules={rules} statements={statements}/>
  <section className="panel"><div className="section-title"><h2>Contas</h2><button className="textbutton" onClick={()=>void addAccount()}><Plus size={16}/> Adicionar</button></div>{accounts.length?accounts.map(a=><div className="item" key={a.id}><div className="avatar"><Landmark size={18}/></div><div className="item-main"><b>{a.name}</b><small>Saldo inicial {money(a.opening_balance_cents)}</small></div></div>):<p className="empty">Cadastre sua primeira conta para começar.</p>}</section>
  <section className="panel"><div className="section-title"><h2>Cartões</h2><button className="textbutton" onClick={()=>void addCard()}><Plus size={16}/> Adicionar</button></div>{cards.length?cards.map(c=><div className="item" key={c.id}><div className="avatar"><CreditCard size={18}/></div><div className="item-main"><b>{c.name}</b><small>Fecha dia {c.closing_day} · Vence dia {c.due_day}</small></div></div>):<p className="empty">Cadastre seus cartões para acompanhar as faturas.</p>}</section>
  <section className="panel forecast-panel"><div className="section-title"><h2>Previsão das faturas</h2><span className="forecast-subtitle">Parcelas + recorrências</span></div>
