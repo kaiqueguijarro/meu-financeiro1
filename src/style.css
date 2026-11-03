@@ -57,3 +57,11 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 .avatar.bank-itaú{background:#0e2946;color:#fff;border:1px solid #547ba5;border-radius:12px;width:43px;height:43px}
 .avatar.bank-itaú span{font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:19px;letter-spacing:-1.6px;color:#fff}
 @media(max-width:380px){.brand-lockup{gap:10px}.brand-mark{width:53px;height:53px;border-radius:14px}.brand-mark span{font-size:25px}.brand-mark i{bottom:9px;width:22px}.brand-copy h1{font-size:19px}.brand-copy p{font-size:10px}.brand-copy small{font-size:9px}.brand-header .iconbutton{padding:9px}}
+
+.balance-projection{margin:16px 0;background:linear-gradient(145deg,#182a45,#111d31);border-color:#35537b}
+.balance-projection .projection-tag{font-size:11px;color:#bcd3f5;border:1px solid #3c5b85;padding:5px 9px;border-radius:999px}
+.balance-projection .projection-value{font-size:clamp(26px,7vw,38px);font-weight:750;margin:14px 0 18px;overflow-wrap:anywhere}
+.balance-projection .projection-rows>div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #30415b;padding:12px 0;align-items:flex-start}
+.balance-projection .projection-rows span{color:#b5c7e0;font-size:12px;line-height:1.5}
+.balance-projection .projection-rows strong{font-size:13px;white-space:nowrap;text-align:right}
+.balance-projection .forecast-footnote{margin-top:14px}
