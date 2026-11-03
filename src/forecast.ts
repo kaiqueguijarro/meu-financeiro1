@@ -9,6 +9,8 @@ export const addMonths=(key:string,delta:number)=>{const [y,m]=key.split('-').ma
 export const currentMonth=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
 export const money=(n:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n/100);
 export const statementMonth=(date:string,closingDay:number)=>{const day=Number(date.slice(8,10));return addMonths(monthKey(date),day<=closingDay?1:2)};
+export const cardClosingDate=(card:ForecastCard,statementKey:string)=>{const closingMonth=card.due_day>card.closing_day?statementKey:addMonths(statementKey,-1);const [year,month]=closingMonth.split('-').map(Number);const lastDay=new Date(Date.UTC(year,month,0)).getUTCDate();return closingMonth+'-'+String(Math.min(Math.max(1,card.closing_day),lastDay)).padStart(2,'0')};
+export const cardStatementLabel=(card:ForecastCard,statementKey:string,status:string|undefined,referenceDate:string)=>{if(status==='paid')return 'Fatura paga';if(status==='closed')return 'Fatura fechada';return referenceDate<=cardClosingDate(card,statementKey)?'Fatura em aberto':'Fatura após fechamento'};
 export function forecastForCard(card:ForecastCard,key:string,purchases:ForecastPurchase[],installments:ForecastInstallment[],rules:ForecastRule[],statements:ForecastStatement[]){
  const lines:ForecastLine[]=[];
  const cardPurchases=purchases.filter(p=>p.card_id===card.id);
