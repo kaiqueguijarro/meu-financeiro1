@@ -52,6 +52,8 @@ export function ForecastWave({cards,transactions,purchases,installments,rules,st
   </svg></div>
   <div className="wave-months" aria-label="Selecionar mês do gráfico">{values.map((v,i)=><button key={v.month} type="button" aria-pressed={active===i} className={active===i?'wave-month active':'wave-month'} onClick={()=>setActive(i)}>{monthLabel(v.month)}</button>)}</div>
   <div className="wave-summary"><div><small>Receitas · {monthLabel(selected.month)}</small><strong className="green">{money(selected.income)}</strong></div><div><small>Gastos · {monthLabel(selected.month)}</small><strong className="wave-blue">{money(selected.expense)}</strong></div></div>
+  <div className="wave-result" aria-live="polite"><div><small>Resultado previsto · {monthLabel(selected.month)}</small><strong className={selected.income-selected.expense>=0?'green':'wave-negative'}>{selected.income-selected.expense>=0?'+ ':'− '}{money(Math.abs(selected.income-selected.expense))}</strong></div><small>{selected.income>=selected.expense?'Receitas previstas superiores aos gastos.':'Gastos previstos superiores às receitas.'}</small></div>
+  <div className="wave-overview" aria-label="Resultado previsto dos próximos seis meses"><span>Resultado total dos 6 meses</span><strong className={values.reduce((sum,v)=>sum+v.income-v.expense,0)>=0?'green':'wave-negative'}>{values.reduce((sum,v)=>sum+v.income-v.expense,0)>=0?'+ ':'− '}{money(Math.abs(values.reduce((sum,v)=>sum+v.income-v.expense,0)))}</strong></div>
   <p className="forecast-footnote">Projeção com registros futuros, recorrências e faturas. Lançamentos já realizados não entram novamente no fluxo previsto; valores não cadastrados não são estimados.</p>
  </section>;
 }
