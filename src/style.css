@@ -73,3 +73,7 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 .wave-overview{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 3px;border-bottom:1px solid #344660}
 .wave-overview strong{font-size:16px;font-variant-numeric:tabular-nums;text-align:right}
 @media(max-width:390px){.wave-result{padding:12px;align-items:flex-start}.wave-result>small{font-size:10px}.wave-result strong{font-size:19px}}
+
+.wave-balance-key{color:#fbbf24;font-size:11px;font-weight:600;white-space:nowrap}
+.wave-legend{flex-wrap:wrap;row-gap:9px}
+.wave-chart{overflow:hidden}
