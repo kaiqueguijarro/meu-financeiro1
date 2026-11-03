@@ -5,6 +5,13 @@ export type ForecastRule = {id:string;description:string;card_id:string|null;amo
 export type ForecastStatement = {id:string;card_id:string;statement_month:string;confirmed_total_cents:number|null;status:string};
 export type ForecastLine = {id:string;label:string;amount_cents:number;kind:'installment'|'recurring'|'purchase';detail?:string};
 export const shortCardName=(name:string)=>{const value=name.toLocaleLowerCase('pt-BR');if(value.includes('latam'))return 'Latam';if(value.includes('azul'))return 'Azul';if(value.includes('black'))return 'Black';return name};
+/** Only associate a bank-account debit with a card when the card is explicitly named. */
+export const isCardStatementPayment=(description:string,cardName:string)=>{
+ const norm=(value:string)=>value.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ const text=norm(description),name=shortCardName(cardName).toLowerCase();
+ const mentionsCard=name==='black'?/\\bblack\\b/.test(text):name==='azul'?/\\bazul\\b/.test(text):name==='latam'?/\\blatam\\b/.test(text):text.includes(name);
+ return mentionsCard&&/fatura|cartao|pagamento|pgto/.test(text);
+};
 export const monthKey=(date:string)=>date.slice(0,7);
 export const addMonths=(key:string,delta:number)=>{const [y,m]=key.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+delta,1));return d.toISOString().slice(0,7)};
 export const currentMonth=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
