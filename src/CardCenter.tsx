@@ -1,3 +1,4 @@
+import { InfoHelp } from './InfoHelp';
 import { useState } from 'react';
 import { addMonths, cardClosingDate, cardStatementLabel, currentMonth, forecastForCard, money, shortCardName } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
@@ -10,7 +11,7 @@ export function CardCenter({cards,purchases,installments,rules,statements}:Props
  const today=new Date().toLocaleDateString('sv-SE');
  const activeCards=selected==='all'?cards:cards.filter(c=>c.id===selected);
  return <section className="panel card-center">
-  <div className="section-title"><h2>Central de cartões</h2><span className="forecast-subtitle">Próximas faturas</span></div>
+  <div className="section-title"><h2>Central de cartões</h2><div className="info-help-actions"><span className="forecast-subtitle">Próximas faturas</span><InfoHelp title="Sobre as faturas">O melhor dia é estimado com base no fechamento cadastrado. Valores futuros não são faturas oficialmente fechadas. Confira os valores com o banco.</InfoHelp></div></div>
   <div className="month-strip" aria-label="Selecionar cartão"><button type="button" className={selected==='all'?'month-choice active':'month-choice'} onClick={()=>setSelected('all')}>Todos</button>{cards.map(c=><button key={c.id} type="button" className={selected===c.id?'month-choice active':'month-choice'} onClick={()=>setSelected(c.id)}>{shortCardName(c.name)}</button>)}</div>
   {activeCards.map(card=>{
    const thisMonth=currentMonth();
@@ -28,6 +29,6 @@ export function CardCenter({cards,purchases,installments,rules,statements}:Props
    </article>;
   })}
   {!cards.length&&<p className="empty">Cadastre um cartão para visualizar os próximos vencimentos.</p>}
-  <p className="forecast-footnote">Melhor dia estimado: dia seguinte ao fechamento cadastrado. A data real pode variar conforme o processamento do banco. Parcelas futuras incluem apenas parcelas individualizadas cadastradas; os valores das faturas podem conter outras compras e recorrências.</p>
+  
  </section>;
 }
