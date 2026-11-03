@@ -4,6 +4,7 @@ export type ForecastInstallment = {id:string;transaction_id:string;installment_n
 export type ForecastRule = {id:string;description:string;card_id:string|null;amount_cents:number;direction:string;payment_method:string;day_of_month:number;start_date:string;end_date:string|null;active:boolean};
 export type ForecastStatement = {id:string;card_id:string;statement_month:string;confirmed_total_cents:number|null;status:string};
 export type ForecastLine = {id:string;label:string;amount_cents:number;kind:'installment'|'recurring'|'purchase';detail?:string};
+export const shortCardName=(name:string)=>{const value=name.toLocaleLowerCase('pt-BR');if(value.includes('latam'))return 'Latam';if(value.includes('azul'))return 'Azul';if(value.includes('black'))return 'Black';return name};
 export const monthKey=(date:string)=>date.slice(0,7);
 export const addMonths=(key:string,delta:number)=>{const [y,m]=key.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+delta,1));return d.toISOString().slice(0,7)};
 export const currentMonth=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
