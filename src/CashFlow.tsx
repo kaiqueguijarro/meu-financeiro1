@@ -13,7 +13,6 @@ export function CashFlow({cards,transactions,purchases,installments,rules,statem
  const [selected,setSelected]=useState(currentMonth());
  const [filter,setFilter]=useState<'all'|'income'|'expense'|'card'>('all');
  const months=Array.from({length:6},(_,i)=>addMonths(currentMonth(),i));
- const initial=accounts.reduce((s,a)=>s+a.opening_balance_cents,0);
  // Opening balances are a snapshot. Historical posted entries must not be added to future cash flow.
  const today=new Date().toLocaleDateString('sv-SE');
  const data=months.map(month=>{
