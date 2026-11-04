@@ -3,14 +3,13 @@ import { useState } from 'react';
 import { addMonths, cardStatementLabel, currentMonth, forecastForCard, isCardStatementPayment, money, shortCardName } from './forecast';
 import type { ForecastCard, ForecastPurchase, ForecastInstallment, ForecastRule, ForecastStatement } from './forecast';
 
-type Account = { opening_balance_cents:number };
 type Transaction = { id:string; description:string; amount_cents:number; direction:'income'|'expense'; payment_method:string; transaction_date:string; status:string };
-type Props = { accounts:Account[]; cards:ForecastCard[]; transactions:Transaction[]; purchases:ForecastPurchase[]; installments:ForecastInstallment[]; rules:ForecastRule[]; statements:ForecastStatement[] };
+type Props = { cards:ForecastCard[]; transactions:Transaction[]; purchases:ForecastPurchase[]; installments:ForecastInstallment[]; rules:ForecastRule[]; statements:ForecastStatement[] };
 const label=(month:string)=>new Date(month+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
 const paymentLabel=(status:string|undefined,date:string,type:'income'|'expense'|'card',today:string)=>{if(status==='paid'||(status==='posted'&&date<=today))return type==='income'?'Recebido':'Pago';if(status==='reconciled'||status==='open')return 'Fatura em aberto';if(status==='future')return 'Fatura futura';if(status==='closed')return 'Fechada';if(date<today)return 'Vencido';if(status==='unconfirmed')return 'Não confirmado';return 'Pendente'};
 const dateFor=(month:string,day:number)=>month+'-'+String(Math.min(Math.max(day,1),new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate())).padStart(2,'0');
 
-export function CashFlow({accounts,cards,transactions,purchases,installments,rules,statements}:Props){
+export function CashFlow({cards,transactions,purchases,installments,rules,statements}:Props){
  const [selected,setSelected]=useState(currentMonth());
  const [filter,setFilter]=useState<'all'|'income'|'expense'|'card'>('all');
  const months=Array.from({length:6},(_,i)=>addMonths(currentMonth(),i));
