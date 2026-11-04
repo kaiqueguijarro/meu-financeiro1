@@ -117,3 +117,14 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 .home-card-heading .info-help-trigger{width:27px;height:27px}
 .home-stats .panel{min-width:0}
 @media(max-width:390px){.home-card-heading .info-help-trigger{width:25px;height:25px}.home-card-heading .info-help-trigger svg{width:14px}}
+
+/* Help-first compact presentation across dashboard and card statements */
+.statement-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 12px;color:#a9c5e9;font-size:12px}
+.statement-status .info-help-trigger{flex:none;width:29px;height:29px}
+.forecast-panel .section-title{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+.forecast-panel .section-title h2{margin-right:auto}
+.forecast-panel .section-title .forecast-subtitle{font-size:11px}
+.wave-heading .info-help-actions{flex:none}
+.wave-heading .info-help-trigger{width:31px;height:31px}
+.info-help-overlay{z-index:9999}
+@media(max-width:420px){.wave-heading .wave-live{display:none}.forecast-panel .section-title .forecast-subtitle{display:none}}
