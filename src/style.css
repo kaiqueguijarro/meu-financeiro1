@@ -128,3 +128,31 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 .wave-heading .info-help-trigger{width:31px;height:31px}
 .info-help-overlay{z-index:9999}
 @media(max-width:420px){.wave-heading .wave-live{display:none}.forecast-panel .section-title .forecast-subtitle{display:none}}
+
+
+/* Privacy mode: the eye in the header obscures amounts across all five tabs. */
+.header-actions{display:flex;align-items:center;gap:6px;flex:none}
+.privacy-toggle[aria-pressed="true"]{background:#264b85;border-color:#5595ff;color:#fff}
+.privacy-toggle:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+.privacy-mode .balance>strong,
+.privacy-mode .home-stats .panel>strong,
+.privacy-mode .projection-value,
+.privacy-mode .projection-rows strong,
+.privacy-mode .wave-summary strong,
+.privacy-mode .wave-overview strong,
+.privacy-mode .wave-result strong,
+.privacy-mode .forecast-total strong,
+.privacy-mode .forecast-card-head strong,
+.privacy-mode .forecast-line b,
+.privacy-mode .card-center-dates b:last-child,
+.privacy-mode .card-center-months strong,
+.privacy-mode .stats .panel>strong,
+.privacy-mode .item-main small,
+.privacy-mode .item>strong,
+.privacy-mode .item .amount,
+.privacy-mode .transaction-amount{
+  filter:blur(10px);user-select:none;-webkit-user-select:none;
+}
+.privacy-mode .wave-chart svg{filter:blur(17px);opacity:.38}
+.privacy-mode .balance>strong,.privacy-mode .forecast-total strong{filter:blur(13px)}
+@media(max-width:380px){.header-actions{gap:2px}.header-actions .iconbutton{min-width:38px;padding:8px}}
