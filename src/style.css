@@ -144,7 +144,7 @@ header{margin-bottom:20px}header h1{font-size:clamp(25px,5vw,33px);line-height:1
 .privacy-mode .forecast-total strong,
 .privacy-mode .forecast-card-head strong,
 .privacy-mode .forecast-line b,
-.privacy-mode .card-center-dates b:last-child,
+.privacy-mode .card-center-dates>div:nth-child(3) b,
 .privacy-mode .card-center-months strong,
 .privacy-mode .stats .panel>strong,
 .privacy-mode .item-main small,
